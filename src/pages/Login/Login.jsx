@@ -12,9 +12,17 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-       const response = await fetch(
-         `${import.meta.env.VITE_API_URL}/api/auth/login`,
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+
+      if (!apiUrl) {
+        throw new Error("API URL is not configured.");
+      }
+
+      const response = await fetch(
+        `${apiUrl}/api/auth/login`,
         {
           method: "POST",
           headers: {
@@ -47,7 +55,11 @@ function Login() {
 
     } catch (error) {
       console.error("Login error:", error);
-      alert("Unable to connect to the server. Please try again.");
+      alert(
+        error.message === "API URL is not configured."
+          ? "Server configuration is missing. Please contact support."
+          : "Unable to connect to the server. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -99,7 +111,8 @@ function Login() {
           </form>
 
           <p className="login-register-link">
-            Don't have an account? <Link to="/register">Create Account</Link>
+            Don't have an account?{" "}
+            <Link to="/register">Create Account</Link>
           </p>
         </div>
       </section>
